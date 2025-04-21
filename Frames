@@ -1,0 +1,39 @@
+package SeleniumPackage;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class Heroku {
+
+	public static void main(String[] args) throws Exception {
+
+
+		WebDriverManager.chromedriver().setup();
+		WebDriver driver=new ChromeDriver();
+		driver.get("https://the-internet.herokuapp.com/windows");
+		driver.manage().window().maximize();
+		Thread.sleep(3000);
+		driver.findElement(By.xpath("//a[normalize-space()='Click Here']")).click();
+		Set<String> s = driver.getWindowHandles();
+		List<String> L= new ArrayList<String>(s);
+		driver.switchTo().window(L.get(1));
+		driver.findElement(By.xpath("//h3[normalize-space()='New Window']"));
+		assert "New Window" != "null in new_window_text"; 
+		System.out.println("Successfully verified that 'New Window' text is present.");
+		driver.close();
+		driver.switchTo();
+		driver.switchTo();
+		System.out .println("Title of the original window:");
+		
+		driver.quit();
+	
+	}
+}
