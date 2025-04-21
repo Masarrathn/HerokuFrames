@@ -1,0 +1,68 @@
+package SeleniumPackage;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class HerokuNestedFrames {
+
+	public static void main(String[] args) throws Exception {
+		
+		WebDriverManager.chromedriver().setup();
+		WebDriver driver=new ChromeDriver();
+		try {
+            driver.get("http://the-internet.herokuapp.com/nested_frames");
+
+            // Switch to top frame
+            driver.switchTo().frame(driver.findElement(By.xpath("//frame[@name='frame-top']")));
+
+            // Count frames inside top frame
+            int topFramesCount = driver.findElements(By.xpath("//frame")).size();
+            System.out.println("Top frame contains " + topFramesCount + " frames.");
+            if (topFramesCount != 3) {
+                throw new AssertionError("Expected 3 frames inside top frame, but found " + topFramesCount);
+            }
+
+            // LEFT frame
+            driver.switchTo().frame(driver.findElement(By.xpath("//frame[@name='frame-left']")));
+            String leftText = driver.findElement(By.xpath("//body")).getText().trim();
+            System.out.println("Left Frame Text: " + leftText);
+            if (!leftText.equals("LEFT")) throw new AssertionError("Expected LEFT but got: " + leftText);
+            driver.switchTo().parentFrame();
+
+            // MIDDLE frame
+            driver.switchTo().frame(driver.findElement(By.xpath("//frame[@name='frame-middle']")));
+            String middleText = driver.findElement(By.xpath("//div")).getText().trim();
+            System.out.println("Middle Frame Text: " + middleText);
+            if (!middleText.equals("MIDDLE")) throw new AssertionError("Expected MIDDLE but got: " + middleText);
+            driver.switchTo().parentFrame();
+
+            // RIGHT frame
+            driver.switchTo().frame(driver.findElement(By.xpath("//frame[@name='frame-right']")));
+            String rightText = driver.findElement(By.xpath("//body")).getText().trim();
+            System.out.println("Right Frame Text: " + rightText);
+            if (!rightText.equals("RIGHT")) throw new AssertionError("Expected RIGHT but got: " + rightText);
+
+            // Back to main content and then to bottom
+            driver.switchTo().defaultContent();
+            driver.switchTo().frame(driver.findElement(By.xpath("//frame[@name='frame-bottom']")));
+            String bottomText = driver.findElement(By.xpath("//body")).getText().trim();
+            System.out.println("Bottom Frame Text: " + bottomText);
+            if (!bottomText.equals("BOTTOM")) throw new AssertionError("Expected BOTTOM but got: " + bottomText);
+
+            // Done
+            driver.switchTo().defaultContent();
+            System.out.println("Test completed successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            driver.quit();
+        }
+    }
+}
+
+	
+
+
